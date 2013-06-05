@@ -1,0 +1,17 @@
+{
+  "name": "RoadAware",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node roadaware.js"
+  },
+  "dependencies": {
+    "node-static": "*",
+    "simpledb": "*",
+    "multiparty": "*",
+    "easyimage": "*",
+    "validator": "*",
+    "aws-sdk": "*",
+    "http-auth": "*"
+  }
+}

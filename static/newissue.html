@@ -1,0 +1,142 @@
+<html>
+<head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <title>
+        </title>
+        <link rel="stylesheet" href="https://s3.amazonaws.com/codiqa-cdn/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+
+<script src="https://s3.amazonaws.com/codiqa-cdn/jquery-1.7.2.min.js"> </script>
+        	<script>
+     
+</script>
+
+ <script src="https://s3.amazonaws.com/codiqa-cdn/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+  
+<script>
+	function getUrlVars() {
+  	  var vars = {};
+  	  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+  	      vars[key] = value;
+  	  });
+    	return vars;
+	}
+
+	</script>
+
+
+<script src="zepto.min.js"></script>
+<script src="binaryajax.js"></script>
+<script src="exif.js"></script>
+<script src="canvasResize.js"></script>
+
+</head>
+<body><!-- Home -->
+<div data-role="page" id="page1">
+    <div data-theme="a" data-role="header">
+        <h3>
+            Road Aware - Beta
+        </h3>
+    </div>
+    <div data-role="content">
+    <legend>
+            Photo (Could take a long time over 3G):
+        </legend> 
+	<input id="photo" name="upload" type=file accept="image/*">
+	<form id="form" method="post" action="/submit" enctype="multipart/form-data" data-ajax="false" onclick="return Checkstatus();"  >
+
+       <div id="movespot" data-role="fieldcontain">
+            <fieldset data-role="controlgroup" data-type="horizontal">
+                <legend>
+                    Mode of transport:
+                </legend>
+                <input id="radio2" name="transport" value="bike" type="radio">
+                <label for="radio2">
+                    Bike
+                </label>
+                <input id="radio3" name="transport" value="car" type="radio">
+                <label for="radio3">
+                    Car
+                </label>
+                <input id="radio4" name="transport" value="walk" type="radio">
+                <label for="radio4">
+                    Foot
+                </label>
+            </fieldset>
+        </div>
+        <div data-role="fieldcontain">
+            <fieldset data-role="controlgroup" name="i"  data-type="horizontal">
+                <legend>
+                    Issue:
+                </legend>
+                <input id="radio5" name="issue" value="pothole" type="radio">
+                <label for="radio5">
+                    Pothole
+                </label>
+                <input id="radio6" name="issue" value="glass" type="radio">
+                <label for="radio6">
+                    Glass
+                </label>
+                <input id="radio7" name="issue" value="other" type="radio">
+                <label for="radio7">
+                    Other
+                </label>
+            </fieldset>
+        </div>
+        <div data-role="fieldcontain">
+            <fieldset data-role="controlgroup">
+                <label for="textarea1">
+                    Description
+                </label>
+                <textarea name="desc"  id="textarea1" placeholder=""></textarea>
+            </fieldset>
+        </div>
+
+        <input type="submit" id="submit" value="Upload">
+        <div id="resizing">Resizing image prior to upload - please wait.</div>
+        <input id="lat" name="lat" type="hidden" value=""/>
+        <input id="lng" name="lng" type="hidden" value=""/>
+        <input id="photoup" name="photoup" type="hidden" value=""/>
+    </form>
+    </div>
+</div>
+</body>
+<script>
+var Resizing = 0;
+function Checkstatus(){
+	if (Resizing == 1) {
+		return false;
+	} else {
+		return true;		
+	}
+};
+document.getElementById("lat").value = getUrlVars()['lat'];
+document.getElementById("lng").value = getUrlVars()['lng'];
+document.getElementById('resizing').style.display = 'none'; 
+
+$('input[name=upload]').change(function(e) {
+	Resizing = 1;
+	document.getElementById('resizing').style.display = 'block'; 
+	
+var file = e.target.files[0];
+canvasResize(file, {
+width: 1024,
+height: 0,
+crop: false,
+quality: 80,
+//rotate: 90,
+callback: function(data, width, height) {
+	if (data.length < 500000){
+document.getElementById("photoup").value = data;
+} else {
+	$('input[name=upload]').insertBefore($('[id=movespot]'));
+}
+Resizing = 0;
+document.getElementById('resizing').style.display = 'none'; 
+}
+});
+});
+</script>
+</html>

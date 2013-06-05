@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Road Issues</title>
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<h1>Road issues</h1>
+		<table id="list" >
+			<thead>
+				<th>Date Spotted</th>
+				<th>Spotted by</th>
+				<th>Hazard Type</th>
+				<th>Photo</th>
+				<th>Description</th>
+				<th>Aprox Location</th>
+			</thead>
+		</table>
+	</body>
+
+	<script type="text/javascript">
+		$.getJSON("/overlay", null, function(markersa) {
+			var table = document.getElementById("list");
+			var objectNo = 0;
+			for (i in markersa) {
+				objectNo = objectNo + 1;
+				var row = table.insertRow(1);
+				markera = markersa[i];
+				var datecell = row.insertCell(0);
+				if ("date" in markera) {
+					datecell.innerHTML = new Date(parseInt(markera["date"])).toLocaleString()
+				};
+				var transportcell = row.insertCell(1);
+				if ("transport" in markera) {
+					switch(markera["transport"]) {
+						case "car":
+							transportcell.innerHTML = "Car"
+							break;
+						case "bike":
+							transportcell.innerHTML = "Bike"
+							break;
+						case "walk":
+							transportcell.innerHTML = "Walker/Runner"
+							break;
+					}
+				};
+				var issuecell = row.insertCell(2);
+				if ("issue" in markera) {
+					switch(markera["issue"]) {
+						case "pothole":
+							issuecell.innerHTML = "Pothole"
+							break;
+						case "glass":
+							issuecell.innerHTML = "Glass"
+							break;
+						case "other":
+							issuecell.innerHTML = "Other"
+							break;
+					}
+				};
+				var picturecell = row.insertCell(3);
+				if ("id" in markera && "picture" in markera) {
+					picturecell.innerHTML = "<a href='https://s3-ap-southeast-2.amazonaws.com/roadaware/" + markera["id"] + "'>Picture</a>";
+				};
+				/*		if ("id" in markera && "picture" in markera) {
+				 deschtml = deschtml + "<a href='https://s3-ap-southeast-2.amazonaws.com/roadaware/" + markera["id"] + "'><img src='https://s3-ap-southeast-2.amazonaws.com/roadaware/" + markera["id"] + "t' width='120'></a><br>";
+				 };*/
+				var desccell = row.insertCell(4);
+				if ("desc" in markera) {
+					desccell.innerHTML = markera["desc"]
+				};
+				loccell = row.insertCell(5);
+				if ("lat" in markera && "lng" in markera) {
+					queueAddress(loccell, objectNo, markera);
+				}
+			}
+
+		});
+		function queueAddress(loccell, objectNo, markera) {
+			
+			setTimeout(function() {
+				getAddress(loccell, markera);
+			}, 200 * objectNo);
+		};
+		function getAddress(loccell, markera) {
+
+			$.getJSON("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + markera['lat'] + "," + markera['lng'] + "&sensor=true", null, function(a) {
+				loccell.innerHTML = "<a href='/map?id=" + markera['id'] + "'>" + a['results'][0]['formatted_address'] + "</a>";
+			});
+
+		};
+	</script>
+</html>
+
